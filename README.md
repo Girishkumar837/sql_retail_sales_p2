@@ -146,17 +146,22 @@ WHERE rank = 1
 ```
 
 8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
-```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
+With highest_sale as (
+	SELECT 
+		customer_id,
+		sum(total_sale) as total_sales,
+		RANK() OVER (ORDER BY sum(total_sale)DESC) AS rnk
+	FROM retail_sales
+	GROUP BY customer_id
+)
+select 
+	customer_id,
+	total_sales
+FROM highest_sale  
+WHERE rnk <=5;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+10. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
 ```sql
 SELECT 
     category,    
